@@ -111,9 +111,8 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
 .zwo-btn:active{background:rgba(232,255,71,.2);}
 
 /* CHECKBOX — THE CRITICAL PART */
-.chk-label{width:32px;height:32px;border-radius:8px;border:2px solid rgba(232,255,71,0.4);background:rgba(232,255,71,0.04);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s;flex-shrink:0;-webkit-tap-highlight-color:transparent;position:relative;}
-.chk-label.on{background:var(–accent);border-color:var(–accent);box-shadow:0 0 12px rgba(232,255,71,0.4);}
-.chk-label.on::after{content:‘✓’;color:#0a0a0f;font-size:17px;font-weight:900;line-height:1;}
+.chk-btn{width:32px;height:32px;border-radius:8px;border:2.5px solid rgba(232,255,71,0.45);background:rgba(232,255,71,0.05);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .2s,border-color .2s,box-shadow .2s;flex-shrink:0;-webkit-tap-highlight-color:transparent;font-size:18px;font-weight:900;color:transparent;line-height:1;}
+.chk-btn.on{background:#e8ff47;border-color:#e8ff47;color:#0a0a0f;box-shadow:0 0 12px rgba(232,255,71,0.5);}
 
 /* FOCUS + CHECKS */
 .wfocus{padding:10px 14px;border-bottom:1px solid var(–border);background:var(–s2);}
@@ -121,12 +120,11 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
 .focus-txt{font-size:12px;color:var(–text);line-height:1.5;}
 .wchecks{padding:10px 14px 14px;}
 .checks-lbl{font-size:9px;letter-spacing:2px;color:var(–muted);font-family:‘DM Mono’,monospace;margin-bottom:8px;}
-.ci-label{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:8px;border:1px solid var(–border);background:var(–s2);cursor:pointer;transition:all .15s;width:100%;margin-bottom:6px;-webkit-tap-highlight-color:transparent;}
-.ci-label:last-child{margin-bottom:0;}
-.ci-label.on{background:rgba(232,255,71,.06);border-color:rgba(232,255,71,.25);}
-.mini-chk{width:20px;height:20px;border-radius:6px;border:2px solid rgba(232,255,71,0.35);background:rgba(232,255,71,0.03);flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all .15s;pointer-events:none;}
-.ci-label.on .mini-chk{background:var(–accent);border-color:var(–accent);}
-.ci-label.on .mini-chk::after{content:‘✓’;font-size:10px;color:#0a0a0f;font-weight:700;}
+.ci-btn{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:8px;border:1px solid var(–border);background:var(–s2);cursor:pointer;transition:background .15s,border-color .15s;width:100%;margin-bottom:6px;-webkit-tap-highlight-color:transparent;text-align:left;}
+.ci-btn:last-child{margin-bottom:0;}
+.ci-btn.on{background:rgba(232,255,71,.08);border-color:rgba(232,255,71,.3);}
+.mini-chk{width:20px;height:20px;border-radius:6px;border:2px solid rgba(232,255,71,0.35);background:rgba(232,255,71,0.03);flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:background .15s,border-color .15s;font-size:11px;font-weight:700;color:transparent;line-height:1;}
+.ci-btn.on .mini-chk{background:#e8ff47;border-color:#e8ff47;color:#0a0a0f;}
 .ci-txt{font-size:12px;color:var(–text);line-height:1.4;pointer-events:none;}
 
 /* XP HERO */
@@ -578,6 +576,41 @@ function updateProgress(){
   document.getElementById('progXP').textContent = xp.earned+' XP';
 }
 
+
+// ── DIRECT STYLE HELPERS (no CSS class reliance) ─────────────────────────
+function applyChkStyle(el, on){
+  el.style.cssText = [
+    'width:32px','height:32px','border-radius:8px','flex-shrink:0',
+    'display:flex','align-items:center','justify-content:center',
+    'cursor:pointer','transition:background .2s,border-color .2s',
+    '-webkit-tap-highlight-color:transparent',
+    'font-size:18px','font-weight:900','line-height:1',
+    on ? 'background:#e8ff47;border:2.5px solid #e8ff47;color:#0a0a0f;box-shadow:0 0 12px rgba(232,255,71,.5)'
+       : 'background:rgba(232,255,71,.05);border:2.5px solid rgba(232,255,71,.4);color:transparent'
+  ].join(';');
+}
+function applyCiStyle(el, on){
+  el.style.cssText = [
+    'display:flex','align-items:center','gap:8px','padding:8px 10px',
+    'border-radius:8px','width:100%','margin-bottom:6px',
+    'cursor:pointer','text-align:left',
+    '-webkit-tap-highlight-color:transparent',
+    'transition:background .15s,border .15s',
+    on ? 'background:rgba(232,255,71,.08);border:1px solid rgba(232,255,71,.3)'
+       : 'background:var(--s2);border:1px solid var(--border)'
+  ].join(';');
+}
+function applyMiniChkStyle(el, on){
+  el.style.cssText = [
+    'width:20px','height:20px','border-radius:6px','flex-shrink:0',
+    'display:flex','align-items:center','justify-content:center',
+    'transition:background .15s','pointer-events:none',
+    'font-size:11px','font-weight:700','line-height:1',
+    on ? 'background:#e8ff47;border:2px solid #e8ff47;color:#0a0a0f'
+       : 'background:rgba(232,255,71,.03);border:2px solid rgba(232,255,71,.35);color:transparent'
+  ].join(';');
+}
+
 // ═══════════════════════════════════════════════
 // RENDER PLAN — DOM-BASED (no innerHTML for interactive elements)
 // ═══════════════════════════════════════════════
@@ -715,43 +748,28 @@ function renderPlan(){
           sactions.appendChild(zBtn);
         }
 
-        // NATIVE CHECKBOX LABEL — most reliable on iOS Safari
-        const chkLabel = document.createElement('label');
-        chkLabel.className = 'chk-label'+(done?' on':'');
-        chkLabel.setAttribute('aria-label', done ? 'Abgehakt' : 'Abhaken');
+        // BUTTON — direct style manipulation, no CSS class dependency
+        const chkBtn = document.createElement('button');
+        chkBtn.type = 'button';
+        chkBtn.textContent = done ? '✓' : '';
+        applyChkStyle(chkBtn, done);
 
-        const chkInput = document.createElement('input');
-        chkInput.type = 'checkbox';
-        chkInput.checked = done;
-        chkInput.style.cssText = 'position:absolute;opacity:0;width:1px;height:1px;pointer-events:none;';
-
-        chkInput.addEventListener('change', function(e){
+        chkBtn.addEventListener('click', function(e){
           e.stopPropagation();
-          const xpBefore = getTotalXP().earned;
-          S[`s_${wi}_${si}`] = this.checked;
+          const newDone = !S[`s_${wi}_${si}`];
+          S[`s_${wi}_${si}`] = newDone;
           saveState();
-          chkLabel.classList.toggle('on', this.checked);
-          // Update sname strikethrough
+          this.textContent = newDone ? '✓' : '';
+          applyChkStyle(this, newDone);
           const sn = scontent.querySelector('.sname');
-          sn.classList.toggle('done-s', this.checked);
-          if(this.checked){
-            const gained = getTotalXP().earned - xpBefore;
-            showToast(`+${s.xp} XP ⭐ Session abgehakt!`);
-          } else {
-            showToast(`-${s.xp} XP · Zurückgesetzt`);
-          }
+          sn.classList.toggle('done-s', newDone);
+          showToast(newDone ? `+${s.xp} XP ⭐ Session abgehakt!` : `-${s.xp} XP · Zurückgesetzt`);
           updateProgress();
-          // Update week ring
           const newPg = getWeekProgress(wi);
-          const ringEl = wcard.querySelector('.ring-wrap svg circle.ring-fg');
-          if(ringEl){
-            const circ = 2*Math.PI*15;
-            ringEl.style.strokeDashoffset = circ*(1-newPg.pct/100);
-          }
+          const ringEl = wcard.querySelector('circle.ring-fg');
+          if(ringEl){ const circ=2*Math.PI*15; ringEl.style.strokeDashoffset=circ*(1-newPg.pct/100); }
         });
-
-        chkLabel.appendChild(chkInput);
-        sactions.appendChild(chkLabel);
+        sactions.appendChild(chkBtn);
 
         srow.appendChild(dayDot);
         srow.appendChild(scontent);
@@ -776,35 +794,33 @@ function renderPlan(){
       w.checks.forEach((c,ci)=>{
         const done = !!S[`c_${wi}_${ci}`];
 
-        const ciLabel = document.createElement('label');
-        ciLabel.className = 'ci-label'+(done?' on':'');
+        const ciBtn = document.createElement('button');
+        ciBtn.type = 'button';
+        applyCiStyle(ciBtn, done);
 
         const miniChk = document.createElement('div');
-        miniChk.className = 'mini-chk';
+        miniChk.textContent = done ? '✓' : '';
+        applyMiniChkStyle(miniChk, done);
 
         const ciTxt = document.createElement('div');
         ciTxt.className = 'ci-txt';
         ciTxt.textContent = c;
+        ciTxt.style.pointerEvents = 'none';
 
-        const ciInput = document.createElement('input');
-        ciInput.type = 'checkbox';
-        ciInput.checked = done;
-        ciInput.style.cssText = 'position:absolute;opacity:0;width:1px;height:1px;pointer-events:none;';
-
-        ciInput.addEventListener('change', function(){
-          S[`c_${wi}_${ci}`] = this.checked;
+        ciBtn.addEventListener('click', function(){
+          const newDone = !S[`c_${wi}_${ci}`];
+          S[`c_${wi}_${ci}`] = newDone;
           saveState();
-          ciLabel.classList.toggle('on', this.checked);
-          if(this.checked){
-            showToast('+10 XP · Ziel erreicht! ✓');
-          }
+          applyCiStyle(this, newDone);
+          miniChk.textContent = newDone ? '✓' : '';
+          applyMiniChkStyle(miniChk, newDone);
+          if(newDone) showToast('+10 XP · Ziel erreicht! ✓');
           updateProgress();
         });
 
-        ciLabel.appendChild(ciInput);
-        ciLabel.appendChild(miniChk);
-        ciLabel.appendChild(ciTxt);
-        checksDiv.appendChild(ciLabel);
+        ciBtn.appendChild(miniChk);
+        ciBtn.appendChild(ciTxt);
+        checksDiv.appendChild(ciBtn);
       });
 
       wbody.appendChild(checksDiv);
