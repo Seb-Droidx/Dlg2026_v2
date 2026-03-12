@@ -90,7 +90,14 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
 .ring-pct{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:‘Bebas Neue’,sans-serif;font-size:10px;}
 
 /* SESSIONS */
-.srow{display:flex;align-items:center;gap:10px;padding:10px 14px;border-bottom:1px solid var(–border);}
+.srow{display:flex;align-items:center;gap:10px;padding:10px 14px;border-bottom:1px solid var(–border);border-left:3px solid transparent;}
+.srow.day-mi{border-left-color:rgba(232,255,71,.6);}
+.srow.day-sa{border-left-color:rgba(255,107,71,.6);}
+.srow.day-do{border-left-color:rgba(71,255,184,.5);}
+.srow.day-mo{border-left-color:rgba(71,184,255,.5);}
+.srow.day-fr{border-left-color:rgba(150,150,180,.3);}
+.srow.day-di{border-left-color:rgba(150,150,180,.15);}
+.srow.day-so{border-left-color:rgba(150,150,180,.1);}
 .srow:last-child{border-bottom:none;}
 .day-dot{width:32px;height:18px;border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:9px;font-family:‘DM Mono’,monospace;font-weight:500;flex-shrink:0;}
 .d-mi{background:rgba(232,255,71,.1);color:var(–accent);border:1px solid rgba(232,255,71,.2);}
@@ -724,7 +731,7 @@ function renderPlan(){
       w.sessions.forEach((s,si)=>{
         const done = !!S[`s_${wi}_${si}`];
         const srow = document.createElement('div');
-        srow.className = 'srow';
+        srow.className = `srow day-${s.day.toLowerCase()}`;
 
         const dayDot = document.createElement('div');
         dayDot.className = `day-dot d-${s.day.toLowerCase()}`;
@@ -857,44 +864,63 @@ function renderFTP(){
   const ftp = S.ftp || 272;
   const wt = S.weight || 84.5;
   const wkg = (ftp/wt).toFixed(2);
+  const hrMax = S.hrMax || 184;
+  const hrRest = S.hrRest || 52;
 
   const container = document.getElementById('page-ftp');
-  container.innerHTML = `
-    <div class="sec-title" style="color:var(--a2)">FTP & ZONEN</div>
-    <div class="sec-sub">LEISTUNGSDIAGNOSTIK</div>
+  container.innerHTML = '';
 
-    <div class="card">
-      <div class="ftp-hero">${ftp}W</div>
-      <div class="ftp-wkg">${wkg} W/KG</div>
-    </div>
+  function card(title, content){
+    const d = document.createElement('div');
+    d.className = 'card';
+    d.innerHTML = (title ? '<div class="card-title">'+title+'</div>' : '') + content;
+    container.appendChild(d);
+  }
 
-    <div class="card">
-      <div class="card-title">FTP BERECHNEN (RAMP TEST)</div>
-      <div class="input-lbl">PEAK POWER (W)</div>
-      <div class="input-group">
-        <input class="input-field" id="peakInput" type="number" inputmode="numeric" placeholder="z.B. 363">
-        <button class="calc-btn" onclick="calcFTP()">BERECHNEN</button>
-      </div>
-      <div class="input-lbl">GEWICHT (KG)</div>
-      <div class="input-group">
-        <input class="input-field" id="weightInput" type="number" inputmode="decimal" placeholder="${wt}" value="${wt}">
-        <button class="calc-btn" style="background:var(--a2)" onclick="saveWeight()">SPEICHERN</button>
-      </div>
-    </div>
+  // Hero
+  const heroCard = document.createElement('div');
+  heroCard.className = 'card';
+  heroCard.innerHTML = '<div class="sec-title" style="color:var(--a2)">FTP & ZONEN</div><div class="sec-sub">LEISTUNGSDIAGNOSTIK</div><div class="ftp-hero">'+ftp+'W</div><div class="ftp-wkg">'+wkg+' W/KG</div>';
+  container.appendChild(heroCard);
 
-    <div class="card">
-      <div class="card-title">TRAININGSZONEN — FTP ${ftp}W</div>
-      <div class="zones-grid" id="zonesGrid"></div>
-    </div>
+  // Calc card
+  const calcCard = document.createElement('div');
+  calcCard.className = 'card';
+  calcCard.innerHTML =
+    '<div class="card-title">FTP BERECHNEN (RAMP TEST)</div>' +
+    '<div class="input-lbl">PEAK POWER (W)</div>' +
+    '<div class="input-group"><input class="input-field" id="peakInput" type="number" inputmode="numeric" placeholder="z.B. 363"><button class="calc-btn" onclick="calcFTP()">BERECHNEN</button></div>' +
+    '<div class="input-lbl">GEWICHT (KG)</div>' +
+    '<div class="input-group"><input class="input-field" id="weightInput" type="number" inputmode="decimal" placeholder="'+wt+'" value="'+wt+'"><button class="calc-btn" style="background:var(--a2)" onclick="saveWeight()">SPEICHERN</button></div>';
+  container.appendChild(calcCard);
 
-    <div class="card">
-      <div class="card-title">FTP VERLAUF</div>
-      <div id="ftpHistory"></div>
-    </div>
-  `;
+  // Power zones
+  const pzCard = document.createElement('div');
+  pzCard.className = 'card';
+  pzCard.innerHTML = '<div class="card-title">LEISTUNGSZONEN — FTP '+ftp+'W</div><div class="zones-grid" id="zonesGrid"></div>';
+  container.appendChild(pzCard);
+
+  // Karvonen card
+  const karvCard = document.createElement('div');
+  karvCard.className = 'card';
+  karvCard.innerHTML =
+    '<div class="card-title">HERZFREQUENZ-ZONEN (KARVONEN)</div>' +
+    '<div class="input-lbl">MAX. HERZFREQUENZ (BPM)</div>' +
+    '<div class="input-group"><input class="input-field" id="hrMaxInput" type="number" inputmode="numeric" placeholder="z.B. 184" value="'+hrMax+'"></div>' +
+    '<div class="input-lbl">RUHEHERZFREQUENZ (BPM)</div>' +
+    '<div class="input-group"><input class="input-field" id="hrRestInput" type="number" inputmode="numeric" placeholder="z.B. 52" value="'+hrRest+'"><button class="calc-btn" style="background:var(--a3)" onclick="calcKarvonen()">BERECHNEN</button></div>' +
+    '<div id="karvGrid" style="margin-top:10px"></div>';
+  container.appendChild(karvCard);
+
+  // History card
+  const histCard = document.createElement('div');
+  histCard.className = 'card';
+  histCard.innerHTML = '<div class="card-title">FTP VERLAUF</div><div id="ftpHistory"></div>';
+  container.appendChild(histCard);
 
   renderZones(ftp);
   renderFTPHistory();
+  if(S.hrMax && S.hrRest){ calcKarvonen(); }
 }
 
 function calcFTP(){
@@ -918,6 +944,35 @@ function saveWeight(){
   saveState();
   showToast(`✅ Gewicht: ${wt}kg gespeichert`);
   renderFTP();
+}
+
+function calcKarvonen(){
+  const hrMax = parseInt(document.getElementById('hrMaxInput').value);
+  const hrRest = parseInt(document.getElementById('hrRestInput').value);
+  if(!hrMax||hrMax<100||!hrRest||hrRest<30){ showToast('❌ Gültige HF-Werte eingeben'); return; }
+  S.hrMax = hrMax; S.hrRest = hrRest; saveState();
+  const hRR = hrMax - hrRest;
+  const zones = [
+    {name:'Z1 Recovery',  pcts:[0.50,0.60], color:'#47b8ff'},
+    {name:'Z2 Aerob',     pcts:[0.60,0.70], color:'#47ffb8'},
+    {name:'Z3 Tempo',     pcts:[0.70,0.80], color:'#e8ff47'},
+    {name:'SST',          pcts:[0.80,0.87], color:'#ffb847'},
+    {name:'Z4 Threshold', pcts:[0.87,0.93], color:'#ff6b47'},
+    {name:'Z5 VO2max',    pcts:[0.93,1.00], color:'#ff47b8'},
+  ];
+  const grid = document.getElementById('karvGrid');
+  if(!grid) return;
+  grid.innerHTML = '';
+  zones.forEach(z=>{
+    const lo = Math.round(hrRest + hRR*z.pcts[0]);
+    const hi = Math.round(hrRest + hRR*z.pcts[1]);
+    const box = document.createElement('div');
+    box.className = 'zone-box';
+    box.style.borderColor = z.color+'44';
+    box.innerHTML = `<div class="zone-name">${z.name}</div><div class="zone-val" style="color:${z.color}">${lo}–${hi} bpm</div><div class="zone-desc">${Math.round(z.pcts[0]*100)}–${Math.round(z.pcts[1]*100)}% HRR</div>`;
+    grid.appendChild(box);
+  });
+  showToast('✅ HF-Zonen berechnet!');
 }
 
 function renderZones(ftp){
