@@ -100,7 +100,9 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
 .wcard{background:var(–surface);border:1px solid var(–border);border-radius:var(–r);margin-bottom:10px;overflow:hidden;transition:border-color .2s,box-shadow .2s;}
 .wcard.current{border-color:var(–accent);box-shadow:0 0 24px rgba(232,255,71,.07);}
 .wcard.done{opacity:.6;}
-.whdr{display:flex;align-items:center;justify-content:space-between;padding:12px 14px;cursor:pointer;user-select:none;}
+.whdr{display:flex;align-items:center;justify-content:space-between;padding:12px 14px;cursor:pointer;user-select:none;width:100%;background:transparent;border:none;color:inherit;text-align:left;font:inherit;}
+.chk-wrap{display:flex;align-items:center;justify-content:center;cursor:pointer;-webkit-tap-highlight-color:transparent;}
+.chk-wrap input{position:absolute;opacity:0;width:0;height:0;pointer-events:none;}
 .whdr:active{background:var(–surface2);}
 .wleft{display:flex;align-items:center;gap:10px;}
 .wnum{font-family:‘Bebas Neue’,sans-serif;font-size:26px;color:var(–muted2);line-height:1;min-width:32px;}
@@ -1004,8 +1006,8 @@ function renderPlan(){
         ${lvl.next ? `<div style="font-size:10px;color:var(--muted);font-family:'DM Mono',monospace">Nächstes: ${lvl.next.icon} ${lvl.next.name} · ${lvl.next.min - xpData.earned} XP</div>` : '<div style="font-size:10px;color:var(--accent);font-family:DM Mono,monospace">MAX LEVEL 🏆</div>'}
       </div>
       <div style="text-align:right;">
-        <div style="font-family:'Bebas Neue',sans-serif;font-size:42px;color:var(--accent);line-height:1;text-shadow:0 0 20px rgba(232,255,71,0.5)">${xpData.earned}</div>
-        <div style="font-size:9px;color:var(--text);opacity:0.6;font-family:'DM Mono',monospace;letter-spacing:2px">XP TOTAL</div>
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:48px;color:#e8ff47;line-height:1;text-shadow:0 0 24px #e8ff47">${xpData.earned}</div>
+        <div style="font-size:10px;color:#e8ff47;opacity:0.8;font-family:'DM Mono',monospace;letter-spacing:2px">XP TOTAL</div>
       </div>
     </div>
     <div style="height:6px;background:var(--border);border-radius:3px;overflow:hidden;">
@@ -1069,13 +1071,13 @@ function renderPlan(){
       if(isC)bh+='<span class="badge b-now">JETZT</span>';
 
       html+=`<div class="wcard${isC?' current':''}${isDone?' done':''}${isOpen?' open':''}" id="wc${wi}">
-        <div class="whdr" data-tw="${wi}">
+        <button class="whdr" onclick="toggleW(${wi})" type="button">
           <div class="wleft">
             <div class="wnum">${String(w.num).padStart(2,'0')}</div>
             <div><div class="wtitle">${w.title}${bh}</div><div class="wdates">${w.dates} · TSS ~${w.tss}</div></div>
           </div>
           <div class="wright">${ring(pg.pct,ph.color)}<div class="chevron">▾</div></div>
-        </div>
+        </button>
         <div class="wbody">`;
 
       w.sessions.forEach((s,si)=>{
@@ -1088,7 +1090,7 @@ function renderPlan(){
           </div>
           <div class="sactions">
             ${s.zwo?`<button class="zwo-btn" onclick="event.stopPropagation();dlZWO(${JSON.stringify(s.zwo).replace(/"/g,'&quot;')})">ZWO</button>`:''}
-            <button class="chk${done?' on':''}" data-ts="${wi}" data-ss="${si}" type="button"></button>
+            <label class="chk-wrap" onclick="event.stopPropagation()"><input type="checkbox" ${done?'checked':''} onchange="event.stopPropagation();toggleS(${wi},${si})"><span class="chk${done?' on':''}"></span></label>
           </div>
         </div>`;
       });
@@ -1097,8 +1099,7 @@ function renderPlan(){
         <div class="wchecks"><div class="checks-lbl">Wochenziele</div>`;
       w.checks.forEach((c,ci)=>{
         const d=S[gk(wi,'c',ci)];
-        html+=`<button class="ci${d?' on':''}" data-tc="${wi}" data-cc="${ci}" type="button">
-          <div class="mini-chk"></div><div class="ci-txt">${c}</div></button>`;
+        html+=`<label class="ci${d?' on':''} chk-wrap"><input type="checkbox" ${d?'checked':''} onchange="toggleC(${wi},${ci})"><span class="mini-chk"></span><div class="ci-txt">${c}</div></label>`;
       });
       html+=`</div></div></div>`;
     });
@@ -1591,21 +1592,7 @@ if(!S[`w${cw}_o`]){S[`w${cw}_o`]=true;save();}
 if(!S.ftpHistory)S.ftpHistory=[{date:'20.02.2026',ftp:272,wkg:'3.22'}];
 renderPlan();
 
-// ── Event Delegation für Plan-Tab (iOS-safe) ──────────────────────────────
-(function(){
-  const container = document.getElementById('planContent');
-  function handle(e){
-    const btn = e.target.closest('[data-ts],[data-tc],[data-tw]');
-    if(!btn) return;
-    e.preventDefault();
-    e.stopPropagation();
-    if(btn.dataset.ts !== undefined)      toggleS(+btn.dataset.ts, +btn.dataset.ss);
-    else if(btn.dataset.tc !== undefined) toggleC(+btn.dataset.tc, +btn.dataset.cc);
-    else if(btn.dataset.tw !== undefined) toggleW(+btn.dataset.tw);
-  }
-  container.addEventListener('touchend', handle, {passive:false});
-  container.addEventListener('click',    handle, false);
-})();
+// V4 · NATIVE CHECKBOX
 </script>
 
 <script>
