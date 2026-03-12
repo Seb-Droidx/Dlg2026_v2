@@ -1,0 +1,956 @@
+<!DOCTYPE html>
+
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="DLG 2026">
+<title>DLG 2026</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:#0a0a0f; --s1:#111118; --s2:#1a1a24; --s3:#222230;
+  --border:#2a2a3a; --border2:#3a3a50;
+  --text:#f0f0f8; --muted:#6b6b8a; --muted2:#4a4a6a;
+  --accent:#e8ff47; --a2:#47b8ff; --a3:#ff6b47; --a4:#b847ff; --green:#47ffb8;
+  --r:14px; --nav-h:64px;
+}
+.light {
+  --bg:#f2f2ee; --s1:#ffffff; --s2:#ebebE5; --s3:#e0e0d8;
+  --border:#d8d8d0; --border2:#c8c8be;
+  --text:#1a1a2e; --muted:#888880; --muted2:#aaaaaa;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{background:var(--bg);-webkit-tap-highlight-color:transparent;}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;padding-bottom:calc(var(--nav-h) + env(safe-area-inset-bottom,0px));}
+
+/* NAV */
+.nav{position:fixed;bottom:0;left:0;right:0;z-index:200;background:var(–bg);border-top:1px solid var(–border);display:flex;padding:8px 0 calc(8px + env(safe-area-inset-bottom,0px));}
+.light .nav{background:var(–bg);}
+.nav-btn{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;border:none;background:transparent;color:var(–muted);cursor:pointer;padding:4px 0;font-size:9px;font-family:‘DM Mono’,monospace;letter-spacing:1px;transition:color .15s;}
+.nav-btn svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;}
+.nav-btn.active{color:var(–accent);}
+
+/* HEADER */
+.header{position:sticky;top:0;z-index:100;background:var(–bg);border-bottom:1px solid var(–border);padding:12px 16px;display:flex;align-items:center;justify-content:space-between;}
+.logo{font-family:‘Bebas Neue’,sans-serif;font-size:22px;letter-spacing:3px;color:var(–accent);}
+.logo-sub{font-size:9px;color:var(–muted);letter-spacing:3px;font-family:‘DM Mono’,monospace;display:block;margin-top:-2px;}
+.header-right{display:flex;align-items:center;gap:8px;}
+.cd-box{text-align:right;}
+.cd-num{font-family:‘Bebas Neue’,sans-serif;font-size:28px;color:var(–accent);line-height:1;}
+.cd-lbl{font-size:8px;color:var(–muted);letter-spacing:2px;font-family:‘DM Mono’,monospace;}
+.theme-btn{width:34px;height:34px;border-radius:50%;border:1px solid var(–border);background:var(–s2);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:16px;}
+
+/* PROGRESS BAR */
+.prog-bar-wrap{background:var(–s1);border-bottom:1px solid var(–border);padding:8px 16px;display:flex;align-items:center;gap:10px;}
+.prog-lbl{font-size:9px;letter-spacing:2px;color:var(–muted);font-family:‘DM Mono’,monospace;white-space:nowrap;}
+.prog-track{flex:1;height:3px;background:var(–border);border-radius:2px;overflow:hidden;}
+.prog-fill{height:100%;background:linear-gradient(90deg,var(–a2),var(–accent));border-radius:2px;transition:width .6s ease;}
+.prog-xp{font-family:‘Bebas Neue’,sans-serif;font-size:16px;color:var(–accent);white-space:nowrap;}
+
+/* PAGES */
+.page{display:none;padding:16px;}
+.page.active{display:block;}
+
+/* CARDS */
+.card{background:var(–s1);border:1px solid var(–border);border-radius:var(–r);padding:16px;margin-bottom:12px;}
+.card-title{font-size:10px;letter-spacing:2px;color:var(–muted);font-family:‘DM Mono’,monospace;margin-bottom:12px;text-transform:uppercase;}
+.sec-title{font-family:‘Bebas Neue’,sans-serif;font-size:28px;letter-spacing:3px;margin-bottom:2px;}
+.sec-sub{font-size:11px;color:var(–muted);font-family:‘DM Mono’,monospace;letter-spacing:1.5px;margin-bottom:16px;}
+
+/* WEEK CARDS */
+.wcard{background:var(–s1);border:1px solid var(–border);border-radius:var(–r);margin-bottom:10px;overflow:hidden;}
+.wcard.current{border-color:var(–accent);}
+.whdr{width:100%;background:transparent;border:none;color:inherit;font:inherit;text-align:left;cursor:pointer;display:flex;align-items:center;justify-content:space-between;padding:12px 14px;-webkit-tap-highlight-color:transparent;}
+.whdr:active{background:var(–s2);}
+.wleft{display:flex;align-items:center;gap:10px;}
+.wnum{font-family:‘Bebas Neue’,sans-serif;font-size:28px;color:var(–muted2);line-height:1;min-width:34px;}
+.wcard.current .wnum{color:var(–accent);}
+.wtitle{font-size:13px;font-weight:600;color:var(–text);}
+.wdates{font-size:10px;color:var(–muted);font-family:‘DM Mono’,monospace;margin-top:1px;}
+.wright{display:flex;align-items:center;gap:8px;}
+.chevron{color:var(–muted);font-size:14px;transition:transform .2s;line-height:1;}
+.wcard.open .chevron{transform:rotate(180deg);}
+.wbody{display:none;border-top:1px solid var(–border);}
+.wcard.open .wbody{display:block;}
+
+/* BADGE */
+.badge{display:inline-block;font-size:9px;font-family:‘DM Mono’,monospace;padding:2px 7px;border-radius:5px;margin-left:6px;vertical-align:middle;}
+.b-deload{background:rgba(71,184,255,.15);color:var(–a2);}
+.b-test{background:rgba(232,255,71,.15);color:var(–accent);}
+.b-race{background:rgba(255,107,71,.2);color:var(–a3);}
+.b-now{background:var(–accent);color:#0a0a0f;}
+
+/* RING */
+.ring-wrap{position:relative;width:38px;height:38px;flex-shrink:0;}
+.ring-wrap svg{width:38px;height:38px;}
+.ring-pct{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:‘Bebas Neue’,sans-serif;font-size:10px;}
+
+/* SESSIONS */
+.srow{display:flex;align-items:center;gap:10px;padding:10px 14px;border-bottom:1px solid var(–border);}
+.srow:last-child{border-bottom:none;}
+.day-dot{width:32px;height:18px;border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:9px;font-family:‘DM Mono’,monospace;font-weight:500;flex-shrink:0;}
+.d-mi{background:rgba(232,255,71,.1);color:var(–accent);border:1px solid rgba(232,255,71,.2);}
+.d-sa{background:rgba(255,107,71,.1);color:var(–a3);border:1px solid rgba(255,107,71,.2);}
+.d-do{background:rgba(71,255,184,.08);color:var(–green);border:1px solid rgba(71,255,184,.15);}
+.d-mo{background:rgba(71,184,255,.08);color:var(–a2);border:1px solid rgba(71,184,255,.15);}
+.d-fr{background:rgba(107,107,138,.08);color:var(–muted);border:1px solid var(–border);}
+.d-di{background:rgba(107,107,138,.06);color:var(–muted2);border:1px solid var(–border);}
+.d-so{background:rgba(107,107,138,.04);color:var(–muted2);border:1px solid var(–border);}
+.scontent{flex:1;min-width:0;}
+.sname{font-size:13px;font-weight:500;color:var(–text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.sname.done-s{text-decoration:line-through;color:var(–muted);}
+.sdetail{font-size:10px;color:var(–muted);line-height:1.4;margin-top:2px;}
+.sactions{display:flex;align-items:center;gap:6px;flex-shrink:0;}
+
+/* ZWO BTN */
+.zwo-btn{height:26px;padding:0 9px;border-radius:7px;border:1px solid rgba(232,255,71,.3);background:rgba(232,255,71,.07);color:var(–accent);font-size:9px;font-family:‘DM Mono’,monospace;cursor:pointer;transition:all .15s;white-space:nowrap;}
+.zwo-btn:active{background:rgba(232,255,71,.2);}
+
+/* CHECKBOX — THE CRITICAL PART */
+.chk-label{width:32px;height:32px;border-radius:8px;border:2px solid rgba(232,255,71,0.4);background:rgba(232,255,71,0.04);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s;flex-shrink:0;-webkit-tap-highlight-color:transparent;position:relative;}
+.chk-label.on{background:var(–accent);border-color:var(–accent);box-shadow:0 0 12px rgba(232,255,71,0.4);}
+.chk-label.on::after{content:‘✓’;color:#0a0a0f;font-size:17px;font-weight:900;line-height:1;}
+
+/* FOCUS + CHECKS */
+.wfocus{padding:10px 14px;border-bottom:1px solid var(–border);background:var(–s2);}
+.focus-lbl{font-size:9px;letter-spacing:2px;color:var(–muted);font-family:‘DM Mono’,monospace;margin-bottom:4px;}
+.focus-txt{font-size:12px;color:var(–text);line-height:1.5;}
+.wchecks{padding:10px 14px 14px;}
+.checks-lbl{font-size:9px;letter-spacing:2px;color:var(–muted);font-family:‘DM Mono’,monospace;margin-bottom:8px;}
+.ci-label{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:8px;border:1px solid var(–border);background:var(–s2);cursor:pointer;transition:all .15s;width:100%;margin-bottom:6px;-webkit-tap-highlight-color:transparent;}
+.ci-label:last-child{margin-bottom:0;}
+.ci-label.on{background:rgba(232,255,71,.06);border-color:rgba(232,255,71,.25);}
+.mini-chk{width:20px;height:20px;border-radius:6px;border:2px solid rgba(232,255,71,0.35);background:rgba(232,255,71,0.03);flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all .15s;pointer-events:none;}
+.ci-label.on .mini-chk{background:var(–accent);border-color:var(–accent);}
+.ci-label.on .mini-chk::after{content:‘✓’;font-size:10px;color:#0a0a0f;font-weight:700;}
+.ci-txt{font-size:12px;color:var(–text);line-height:1.4;pointer-events:none;}
+
+/* XP HERO */
+.xp-hero{background:linear-gradient(135deg,rgba(232,255,71,.07),transparent);border:1px solid rgba(232,255,71,.2);border-radius:var(–r);padding:16px;margin-bottom:12px;}
+.xp-level-lbl{font-size:10px;letter-spacing:2px;color:var(–muted);font-family:‘DM Mono’,monospace;}
+.xp-level-name{font-family:‘Bebas Neue’,sans-serif;font-size:32px;color:var(–accent);line-height:1;}
+.xp-next{font-size:10px;color:var(–muted);font-family:‘DM Mono’,monospace;margin-top:2px;}
+.xp-num{font-family:‘Bebas Neue’,sans-serif;font-size:48px;color:#e8ff47;line-height:1;text-shadow:0 0 20px rgba(232,255,71,.4);}
+.xp-total-lbl{font-size:9px;color:#e8ff47;opacity:.7;font-family:‘DM Mono’,monospace;letter-spacing:2px;}
+.xp-bar-track{height:6px;background:var(–border);border-radius:3px;overflow:hidden;margin-top:10px;}
+.xp-bar-fill{height:100%;background:var(–accent);border-radius:3px;transition:width .6s ease;}
+.xp-bar-labels{display:flex;justify-content:space-between;margin-top:3px;}
+.xp-bar-lbl{font-size:9px;color:var(–muted);font-family:‘DM Mono’,monospace;}
+
+/* STATS */
+.stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px;}
+.stat-box{background:var(–s1);border:1px solid var(–border);border-radius:12px;padding:12px 8px;text-align:center;}
+.stat-val{font-family:‘Bebas Neue’,sans-serif;font-size:28px;color:var(–accent);line-height:1;}
+.stat-lbl{font-size:9px;color:var(–muted);letter-spacing:1.5px;font-family:‘DM Mono’,monospace;margin-top:2px;}
+
+/* XP LEGEND */
+.xp-legend{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px;}
+.xp-tag{background:var(–s2);border:1px solid var(–border);border-radius:7px;padding:5px 10px;font-size:10px;font-family:‘DM Mono’,monospace;}
+
+/* ACHIEVEMENTS */
+.ach-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;}
+.ach{background:var(–s2);border:1px solid var(–border);border-radius:10px;padding:10px 6px;text-align:center;transition:all .2s;}
+.ach.earned{background:rgba(232,255,71,.07);border-color:rgba(232,255,71,.25);}
+.ach-icon{font-size:22px;margin-bottom:4px;}
+.ach-name{font-size:9px;font-family:‘DM Mono’,monospace;color:var(–muted);line-height:1.3;}
+.ach.earned .ach-name{color:var(–accent);}
+
+/* PHASE BANNER */
+.phase-banner{border-radius:var(–r);padding:14px 16px;margin-bottom:10px;border:1px solid var(–border);}
+.phase-num{font-family:‘Bebas Neue’,sans-serif;font-size:11px;letter-spacing:3px;color:var(–muted);}
+.phase-name{font-family:‘Bebas Neue’,sans-serif;font-size:24px;letter-spacing:2px;line-height:1;}
+.phase-sub{font-size:10px;color:var(–muted);font-family:‘DM Mono’,monospace;margin-top:2px;}
+
+/* FTP PAGE */
+.ftp-hero{font-family:‘Bebas Neue’,sans-serif;font-size:72px;color:var(–a2);line-height:1;text-align:center;}
+.ftp-wkg{font-family:‘Bebas Neue’,sans-serif;font-size:28px;color:var(–muted);text-align:center;margin-top:-4px;}
+.input-group{display:flex;gap:8px;margin-bottom:10px;}
+.input-field{flex:1;height:44px;border-radius:10px;border:1px solid var(–border);background:var(–s2);color:var(–text);font-family:‘DM Mono’,monospace;font-size:13px;padding:0 12px;outline:none;-webkit-appearance:none;}
+.input-field:focus{border-color:var(–a2);}
+.input-lbl{font-size:10px;color:var(–muted);font-family:‘DM Mono’,monospace;letter-spacing:1px;margin-bottom:4px;}
+.calc-btn{height:44px;padding:0 20px;border-radius:10px;background:var(–accent);border:none;color:#0a0a0f;font-family:‘DM Mono’,monospace;font-size:12px;font-weight:500;cursor:pointer;white-space:nowrap;-webkit-tap-highlight-color:transparent;}
+.calc-btn:active{opacity:.85;}
+.zones-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;}
+.zone-box{background:var(–s2);border:1px solid var(–border);border-radius:10px;padding:10px 12px;}
+.zone-name{font-size:10px;color:var(–muted);font-family:‘DM Mono’,monospace;margin-bottom:2px;}
+.zone-val{font-family:‘Bebas Neue’,sans-serif;font-size:22px;line-height:1;}
+.zone-desc{font-size:10px;color:var(–muted);margin-top:1px;}
+
+/* TOAST */
+.toast{position:fixed;bottom:calc(var(–nav-h) + 16px);left:50%;transform:translateX(-50%) translateY(80px);background:var(–accent);color:#0a0a0f;font-family:‘DM Mono’,monospace;font-size:11px;font-weight:500;padding:10px 20px;border-radius:20px;z-index:999;transition:transform .35s cubic-bezier(.34,1.56,.64,1);pointer-events:none;white-space:nowrap;box-shadow:0 4px 20px rgba(0,0,0,.3);}
+.toast.show{transform:translateX(-50%) translateY(0);}
+</style>
+
+</head>
+<body>
+
+<!-- HEADER -->
+
+<div class="header">
+  <div>
+    <div class="logo">DLG 2026<span class="logo-sub">DREILÄNDERGIRO</span></div>
+  </div>
+  <div class="header-right">
+    <div class="cd-box">
+      <div class="cd-num" id="cdNum">--</div>
+      <div class="cd-lbl">TAGE</div>
+    </div>
+    <button class="theme-btn" id="themeBtn" onclick="toggleTheme()">🌙</button>
+  </div>
+</div>
+
+<!-- PROGRESS BAR -->
+
+<div class="prog-bar-wrap">
+  <span class="prog-lbl">GESAMTFORTSCHRITT</span>
+  <div class="prog-track"><div class="prog-fill" id="progFill" style="width:0%"></div></div>
+  <span class="prog-xp" id="progXP">0 XP</span>
+</div>
+
+<!-- PAGES -->
+
+<div id="page-plan" class="page active"></div>
+<div id="page-ftp" class="page"></div>
+
+<!-- NAV -->
+
+<nav class="nav">
+  <button class="nav-btn active" id="nav-plan" onclick="switchPage('plan',this)">
+    <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg>
+    PLAN
+  </button>
+  <button class="nav-btn" id="nav-ftp" onclick="switchPage('ftp',this)">
+    <svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+    FTP
+  </button>
+</nav>
+
+<!-- TOAST -->
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ═══════════════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════════════
+const STORE_KEY = 'dlg2026_v5';
+function loadState(){ try{ return JSON.parse(localStorage.getItem(STORE_KEY))||{}; }catch(e){ return {}; } }
+function saveState(){ localStorage.setItem(STORE_KEY, JSON.stringify(S)); }
+let S = loadState();
+
+// ═══════════════════════════════════════════════
+// THEME
+// ═══════════════════════════════════════════════
+function toggleTheme(){
+  S.theme = S.theme==='light' ? 'dark' : 'light';
+  applyTheme(); saveState();
+}
+function applyTheme(){
+  document.body.classList.toggle('light', S.theme==='light');
+  document.getElementById('themeBtn').textContent = S.theme==='light' ? '🌑' : '🌙';
+}
+applyTheme();
+
+// ═══════════════════════════════════════════════
+// NAVIGATION
+// ═══════════════════════════════════════════════
+function switchPage(id, btn){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('page-'+id).classList.add('active');
+  btn.classList.add('active');
+  if(id==='plan') renderPlan();
+  if(id==='ftp') renderFTP();
+}
+
+// ═══════════════════════════════════════════════
+// DAYS LEFT
+// ═══════════════════════════════════════════════
+function daysLeft(){
+  const race = new Date('2026-06-28');
+  const now = new Date();
+  return Math.max(0, Math.ceil((race-now)/(1000*60*60*24)));
+}
+document.getElementById('cdNum').textContent = daysLeft();
+
+// ═══════════════════════════════════════════════
+// TRAINING DATA
+// ═══════════════════════════════════════════════
+const phases = [
+  { name:'BASISAUFBAU', num:1, color:'#47b8ff', weeks:[0,1,2,3,4,5] },
+  { name:'INTENSIVIERUNG', num:2, color:'#e8ff47', weeks:[6,7,8,9,10,11] },
+  { name:'PEAK & RENNSPEZIFIK', num:3, color:'#ff6b47', weeks:[12,13,14,15] },
+  { name:'TAPER + RACE DAY', num:4, color:'#ff47b8', weeks:[16] },
+];
+
+const weeks = [
+  // PHASE 1
+  { num:1, dates:'02.–08.03.', tss:350, title:'Routine aufbauen', badge:'', focus:'ERG-Modus nutzen, 5-SST-Gefühl kennenlernen. Nicht zu hart — es muss kontrollierbar bleiben.',
+    checks:['Mi: SST 4×5\' @245W absolviert','Do: 90min Z2 @180W absolviert','Sa: 2h Long Ride absolviert','Gym 2× (Mo+Fr) absolviert','Protein >150g/Tag (min. 5 Tage)'],
+    sessions:[
+      {day:'MO',name:'Gym: Beine & Core',detail:'Kniebeugen 3×10, Bulgarian Splits 3×8, Hip Thrusts 3×12, Plank 3×45s',xp:20},
+      {day:'DI',name:'Mobility',detail:'Hüfte, Hamstrings, Thorax-Rotation',xp:5},
+      {day:'MI',name:'SST 4×5\'',detail:'15\' WU → 4× 5min @245W, 3min Pause @150W → 10\' CD',xp:50,zwo:{name:'W1_MI_SST_4x5_245W',ftp:272,wu:900,intervals:[{dur:300,pwr:0.901},{dur:180,pwr:0.551}],sets:4,cd:600}},
+      {day:'DO',name:'Zone 2',detail:'@180W, 90min, Kadenz 85–95 rpm',xp:30,zwo:{name:'W1_DO_Z2_90min',ftp:272,wu:300,intervals:[{dur:4800,pwr:0.662}],sets:1,cd:300}},
+      {day:'FR',name:'Gym: OK + Core',detail:'Rudern 3×10, Klimmzüge 2×8, Schulterdrücken 2×10, Plank 3×60s',xp:15},
+      {day:'SA',name:'Long Ride Z2',detail:'@170W, 2h locker, 1 Gel bei 60min testen',xp:45,zwo:{name:'W1_SA_LongRide_Z2_2h',ftp:272,wu:300,intervals:[{dur:6600,pwr:0.625}],sets:1,cd:300}},
+      {day:'SO',name:'RUHETAG',detail:'Sauna, Spaziergang, Schlaf',xp:0},
+    ]},
+  { num:2, dates:'09.–15.03.', tss:400, title:'Volumen steigern', badge:'', focus:'+1 SST-Intervall, +30min Long Ride. Progressive Überladung.',
+    checks:['Mi: SST 5×5\' @245W absolviert','Sa: 2,5h Long Ride absolviert','Gel-Verträglichkeit ok'],
+    sessions:[
+      {day:'MO',name:'Gym: Beine & Core',detail:'+2,5kg zu W1-Gewichten, Step-Ups 3×10 ergänzen',xp:20},
+      {day:'DI',name:'Mobility',detail:'Foam Rolling + Dehnen',xp:5},
+      {day:'MI',name:'SST 5×5\'',detail:'15\' WU → 5× 5min @245W, 3min Pause → CD',xp:50,zwo:{name:'W2_MI_SST_5x5_245W',ftp:272,wu:900,intervals:[{dur:300,pwr:0.901},{dur:180,pwr:0.551}],sets:5,cd:600}},
+      {day:'DO',name:'Zone 2',detail:'@180W, 2h stabil',xp:30,zwo:{name:'W2_DO_Z2_120min',ftp:272,wu:300,intervals:[{dur:6600,pwr:0.662}],sets:1,cd:300}},
+      {day:'FR',name:'Gym: OK + Core',detail:'Wie W1, leichte Progression',xp:15},
+      {day:'SA',name:'Long Ride Z2',detail:'@170W, 2,5h, Gel bei 60min + 120min',xp:45,zwo:{name:'W2_SA_LongRide_Z2_2h30',ftp:272,wu:300,intervals:[{dur:8400,pwr:0.625}],sets:1,cd:300}},
+      {day:'SO',name:'RUHETAG',detail:'Sauna, Regeneration',xp:0},
+    ]},
+  { num:3, dates:'16.–22.03.', tss:480, title:'SST-Blöcke verlängern', badge:'', focus:'Sprung auf 8\'-Blöcke! Länger > härter. Erste 3h-Fahrt + Nutrition-Testing.',
+    checks:['Mi: SST 3×8\' @248W absolviert','Sa: 3h Long Ride absolviert','Gel-Timing getestet'],
+    sessions:[
+      {day:'MO',name:'Gym: Beine & Core',detail:'+2,5kg, einbeinige Kniebeugen einführen',xp:20},
+      {day:'DI',name:'Mobility',detail:'Routine',xp:5},
+      {day:'MI',name:'SST 3×8\'',detail:'15\' WU → 3× 8min @248W (+3W), 4min Pause → CD',xp:50,zwo:{name:'W3_MI_SST_3x8_248W',ftp:272,wu:900,intervals:[{dur:480,pwr:0.912},{dur:240,pwr:0.551}],sets:3,cd:600}},
+      {day:'DO',name:'Zone 2',detail:'@180W, 2h15',xp:30,zwo:{name:'W3_DO_Z2_135min',ftp:272,wu:300,intervals:[{dur:7500,pwr:0.662}],sets:1,cd:300}},
+      {day:'FR',name:'Gym: OK + Core',detail:'Maintenance',xp:15},
+      {day:'SA',name:'Long Ride Z2',detail:'@170W, 3h — Nutrition alle 45min testen',xp:45,zwo:{name:'W3_SA_LongRide_Z2_3h',ftp:272,wu:300,intervals:[{dur:10200,pwr:0.625}],sets:1,cd:300}},
+      {day:'SO',name:'RUHETAG',detail:'Sauna, Yoga',xp:0},
+    ]},
+  { num:4, dates:'23.–29.03.', tss:250, title:'Regeneration', badge:'deload', focus:'Weniger ist mehr. Dein Körper wird in dieser Woche stärker — nicht beim Training, sondern bei der Erholung.',
+    checks:['Schlaf >7,5h jede Nacht','Beine fühlen sich am So frisch an'],
+    sessions:[
+      {day:'MO',name:'Gym Light (70%)',detail:'Gewichte -30%, Technik-Fokus, kein Muskelversagen',xp:10},
+      {day:'DI',name:'Mobility',detail:'Extra Foam Rolling',xp:5},
+      {day:'MI',name:'SST 3×5\' easy',detail:'3× 5min @240W (leichter), entspannt',xp:25,zwo:{name:'W4_MI_SST_3x5_easy',ftp:272,wu:900,intervals:[{dur:300,pwr:0.882},{dur:180,pwr:0.551}],sets:3,cd:600}},
+      {day:'DO',name:'Zone 2 easy',detail:'@170W, wirklich locker',xp:15,zwo:{name:'W4_DO_Z2_easy_75min',ftp:272,wu:300,intervals:[{dur:4200,pwr:0.625}],sets:1,cd:300}},
+      {day:'FR',name:'RUHETAG',detail:'Komplette Pause',xp:0},
+      {day:'SA',name:'Z2 optional',detail:'@165W, nur bei gutem Gefühl',xp:20,zwo:{name:'W4_SA_Z2_optional',ftp:272,wu:300,intervals:[{dur:4500,pwr:0.607}],sets:1,cd:300}},
+      {day:'SO',name:'RUHETAG',detail:'Sauna, Massage, Schlaf >8h',xp:0},
+    ]},
+  { num:5, dates:'30.03.–05.04.', tss:500, title:'Block-Progression', badge:'', focus:'Sprung auf 12\'-Blöcke. Wenn beide durchgehalten: du bist bereit für Phase 2.',
+    checks:['Mi: SST 2×12\' @250W absolviert','Sa: 3,5h Long Ride absolviert','Gel-Routine funktioniert'],
+    sessions:[
+      {day:'MO',name:'Gym: Beine & Core',detail:'Zurück auf 100%, volle Gewichte',xp:20},
+      {day:'DI',name:'Mobility',detail:'Routine',xp:5},
+      {day:'MI',name:'SST 2×12\'',detail:'15\' WU → 2× 12min @250W, 5min Pause → CD',xp:50,zwo:{name:'W5_MI_SST_2x12_250W',ftp:272,wu:900,intervals:[{dur:720,pwr:0.919},{dur:300,pwr:0.551}],sets:2,cd:600}},
+      {day:'DO',name:'Zone 2',detail:'@180W, 2h15',xp:30,zwo:{name:'W5_DO_Z2_135min',ftp:272,wu:300,intervals:[{dur:7500,pwr:0.662}],sets:1,cd:300}},
+      {day:'FR',name:'Gym: OK + Core',detail:'Maintenance',xp:15},
+      {day:'SA',name:'Long Ride Z2',detail:'@170W, 3,5h, Gel alle 40min',xp:45,zwo:{name:'W5_SA_LongRide_3h30',ftp:272,wu:300,intervals:[{dur:12000,pwr:0.625}],sets:1,cd:300}},
+      {day:'SO',name:'RUHETAG',detail:'Sauna, Regeneration',xp:0},
+    ]},
+  { num:6, dates:'06.–12.04.', tss:400, title:'FTP Ramp Test #1', badge:'test', focus:'Moderat trainieren, nicht ausbrennen vor Test. Erholung ist die Vorbereitung.',
+    checks:['FTP Ramp Test absolviert','Alle Zonen neu berechnet','3h Long Ride absolviert'],
+    sessions:[
+      {day:'MO',name:'Gym: Beine & Core',detail:'Moderat, nicht ausbrennen vor Test',xp:15},
+      {day:'DI',name:'RUHETAG',detail:'Extra Erholung vor Test',xp:0},
+      {day:'MI',name:'⚡ FTP RAMP TEST',detail:'15\' WU → Ramp ab 150W, +20W/min → bis Abbruch → CD',xp:50,zwo:{name:'W6_MI_FTP_Ramp_Test',ftp:272,wu:900,ramp:true,cd:600}},
+      {day:'DO',name:'Zone 2 easy',detail:'@neue Z2-Werte, locker',xp:20,zwo:{name:'W6_DO_Z2_easy',ftp:272,wu:300,intervals:[{dur:5100,pwr:0.662}],sets:1,cd:300}},
+      {day:'FR',name:'Gym: OK + Core',detail:'Technik',xp:15},
+      {day:'SA',name:'Long Ride Z2',detail:'@170W, 3h, entspannt',xp:45,zwo:{name:'W6_SA_LongRide_3h',ftp:272,wu:300,intervals:[{dur:10200,pwr:0.625}],sets:1,cd:300}},
+      {day:'SO',name:'RUHETAG',detail:'Sauna, Phase 1 Reflexion',xp:0},
+    ]},
+  // PHASE 2
+  { num:7, dates:'13.–19.04.', tss:520, title:'VO2max Intro', badge:'', focus:'Erste VO2max-Erfahrung. 3\'-Blöcke sind kurz genug um durchzuhalten. Pacing: gleichmäßig!',
+    checks:['Mi: VO2max 5×3\' @305W absolviert','Sa: 3,5h Long Ride absolviert'],
+    sessions:[
+      {day:'MO',name:'Gym: Beine & Core',detail:'Intensität beibehalten, einbeinige Übungen Fokus',xp:20},
+      {day:'DI',name:'Mobility',detail:'Routine',xp:5},
+      {day:'MI',name:'VO2max 5×3\'',detail:'15\' WU → 5× 3min @305W, 3min Pause @150W → CD',xp:50,zwo:{name:'W7_MI_VO2_5x3_305W',ftp:285,wu:900,intervals:[{dur:180,pwr:1.07},{dur:180,pwr:0.526}],sets:5,cd:600}},
+      {day:'DO',name:'Zone 2',detail:'@185W (neue Z2!), 2,5h',xp:30,zwo:{name:'W7_DO_Z2_150min',ftp:285,wu:300,intervals:[{dur:9000,pwr:0.649}],sets:1,cd:300}},
+      {day:'FR',name:'Gym: OK + Core',detail:'Maintenance',xp:15},
+      {day:'SA',name:'Long Ride Z2',detail:'@175W, 3,5h',xp:45,zwo:{name:'W7_SA_LongRide_3h30',ftp:285,wu:300,intervals:[{dur:12000,pwr:0.614}],sets:1,cd:300}},
+      {day:'SO',name:'RUHETAG',detail:'Sauna, Extra Regeneration!',xp:0},
+    ]},
+  { num:8, dates:'20.–26.04.', tss:280, title:'Recovery', badge:'deload', focus:'Vollständige Erholung nach erster VO2-Woche. Deload ernst nehmen = stärker zurückkommen.',
+    checks:['Schlaf >8h priorität','Gefühl am Wochenende gut'],
+    sessions:[
+      {day:'MO',name:'Gym Light (70%)',detail:'Recovery-Modus',xp:10},
+      {day:'DI',name:'Mobility',detail:'Foam Rolling, Dehnen',xp:5},
+      {day:'MI',name:'SST 3×5\' easy',detail:'3× 5min @245W, Beine durchbewegen',xp:25,zwo:{name:'W8_MI_SST_easy',ftp:285,wu:900,intervals:[{dur:300,pwr:0.86},{dur:180,pwr:0.526}],sets:3,cd:600}},
+      {day:'DO',name:'Zone 2 easy',detail:'@175W, entspannt',xp:15,zwo:{name:'W8_DO_Z2_easy',ftp:285,wu:300,intervals:[{dur:5100,pwr:0.614}],sets:1,cd:300}},
+      {day:'FR',name:'RUHETAG',detail:'Komplette Pause',xp:0},
+      {day:'SA',name:'Z2 optional',detail:'@170W, nur bei Lust',xp:20,zwo:{name:'W8_SA_optional',ftp:285,wu:300,intervals:[{dur:5400,pwr:0.596}],sets:1,cd:300}},
+      {day:'SO',name:'RUHETAG',detail:'Sauna, Massage, Schlaf',xp:0},
+    ]},
+  { num:9, dates:'27.04.–03.05.', tss:580, title:'VO2max + Volumen', badge:'', focus:'+1 VO2-Intervall (jetzt 6!), erste 4h-Fahrt. Carb-Aufnahme von 60g/h üben.',
+    checks:['Mi: VO2max 6×3\' absolviert','Sa: 4h Long Ride absolviert','60g Carbs/h getestet'],
+    sessions:[
+      {day:'MO',name:'Gym: Beine & Core',detail:'Zurück auf 100%',xp:20},
+      {day:'DI',name:'Mobility',detail:'Routine',xp:5},
+      {day:'MI',name:'VO2max 6×3\'',detail:'15\' WU → 6× 3min @305W, 3min Pause → CD',xp:50,zwo:{name:'W9_MI_VO2_6x3_305W',ftp:285,wu:900,intervals:[{dur:180,pwr:1.07},{dur:180,pwr:0.526}],sets:6,cd:600}},
+      {day:'DO',name:'Zone 2',detail:'@185W, 2h45',xp:30,zwo:{name:'W9_DO_Z2_165min',ftp:285,wu:300,intervals:[{dur:9900,pwr:0.649}],sets:1,cd:300}},
+      {day:'FR',name:'Gym: OK + Core',detail:'Maintenance',xp:15},
+      {day:'SA',name:'Long Ride Z2',detail:'@175W, 4h — 60g Carbs/h testen!',xp:45,zwo:{name:'W9_SA_LongRide_4h',ftp:285,wu:300,intervals:[{dur:13800,pwr:0.614}],sets:1,cd:300}},
+      {day:'SO',name:'RUHETAG',detail:'Sauna',xp:0},
+    ]},
+  { num:10, dates:'04.–10.05.', tss:620, title:'SST + Longest Ride', badge:'', focus:'SST jetzt in 15\'-Blöcken + 4,5h Long Ride. Nutrition-Protokoll vom Renntag simulieren!',
+    checks:['Mi: SST 2×15\' @260W absolviert','Sa: 4,5h Long Ride absolviert'],
+    sessions:[
+      {day:'MO',name:'Gym: Beine & Core',detail:'Progression',xp:20},
+      {day:'DI',name:'Mobility',detail:'Routine',xp:5},
+      {day:'MI',name:'SST 2×15\'',detail:'15\' WU → 2× 15min @260W, 5min Pause → CD',xp:50,zwo:{name:'W10_MI_SST_2x15_260W',ftp:285,wu:900,intervals:[{dur:900,pwr:0.912},{dur:300,pwr:0.526}],sets:2,cd:600}},
+      {day:'DO',name:'Zone 2',detail:'@185W, 3h',xp:30,zwo:{name:'W10_DO_Z2_180min',ftp:285,wu:300,intervals:[{dur:10800,pwr:0.649}],sets:1,cd:300}},
+      {day:'FR',name:'Gym: OK + Core',detail:'Maintenance',xp:15},
+      {day:'SA',name:'Long Ride Z2',detail:'@175W, 4,5h — Race-Nutrition-Test',xp:45,zwo:{name:'W10_SA_LongRide_4h30',ftp:285,wu:300,intervals:[{dur:15600,pwr:0.614}],sets:1,cd:300}},
+      {day:'SO',name:'RUHETAG',detail:'Sauna, Recovery',xp:0},
+    ]},
+  { num:11, dates:'11.–17.05.', tss:600, title:'VO2max Peak', badge:'', focus:'Höchste VO2max-Belastung: 7 Intervalle @308W. Letzte VO2-Session vor dem Rennen.',
+    checks:['Mi: VO2max 7×3\' @308W absolviert','Sa: 4h Long Ride absolviert'],
+    sessions:[
+      {day:'MO',name:'Gym: Beine & Core',detail:'Maintain',xp:20},
+      {day:'DI',name:'Mobility',detail:'Routine',xp:5},
+      {day:'MI',name:'VO2max 7×3\'',detail:'15\' WU → 7× 3min @308W (+3W), 3min Pause → CD',xp:50,zwo:{name:'W11_MI_VO2_7x3_308W',ftp:285,wu:900,intervals:[{dur:180,pwr:1.081},{dur:180,pwr:0.526}],sets:7,cd:600}},
+      {day:'DO',name:'Zone 2',detail:'@185W, 2,5h',xp:30,zwo:{name:'W11_DO_Z2_150min',ftp:285,wu:300,intervals:[{dur:9000,pwr:0.649}],sets:1,cd:300}},
+      {day:'FR',name:'Gym: OK + Core',detail:'Maintenance',xp:15},
+      {day:'SA',name:'Long Ride Z2',detail:'@175W, 4h',xp:45,zwo:{name:'W11_SA_LongRide_4h',ftp:285,wu:300,intervals:[{dur:13800,pwr:0.614}],sets:1,cd:300}},
+      {day:'SO',name:'RUHETAG',detail:'Sauna',xp:0},
+    ]},
+  { num:12, dates:'18.–24.05.', tss:450, title:'FTP Ramp Test #2', badge:'test', focus:'Gleicher Ablauf wie Test #1. Alles neu berechnen für Phase 3.',
+    checks:['FTP Ramp Test absolviert','FTP-Steigerung ≥23W erreicht?','Alle Zonen für Phase 3 neu berechnet'],
+    sessions:[
+      {day:'MO',name:'Gym: Beine & Core',detail:'Moderat vor Test',xp:15},
+      {day:'DI',name:'RUHETAG',detail:'Extra Erholung',xp:0},
+      {day:'MI',name:'⚡ FTP RAMP TEST',detail:'Wie Test #1 — gleicher Ablauf',xp:50,zwo:{name:'W12_MI_FTP_Ramp_Test',ftp:285,wu:900,ramp:true,cd:600}},
+      {day:'DO',name:'Zone 2 easy',detail:'@neue Z2, locker',xp:20,zwo:{name:'W12_DO_Z2_easy',ftp:285,wu:300,intervals:[{dur:7200,pwr:0.649}],sets:1,cd:300}},
+      {day:'FR',name:'Gym: OK + Core',detail:'Technik',xp:15},
+      {day:'SA',name:'Long Ride Z2',detail:'@180W, 4h, entspannt',xp:45,zwo:{name:'W12_SA_LongRide_4h',ftp:285,wu:300,intervals:[{dur:13800,pwr:0.632}],sets:1,cd:300}},
+      {day:'SO',name:'RUHETAG',detail:'Sauna, Phase 2 Reflexion',xp:0},
+    ]},
+  // PHASE 3
+  { num:13, dates:'25.–31.05.', tss:700, title:'5h-Meilenstein 🚩', badge:'', focus:'MEILENSTEIN: Erste 5h-Fahrt! Komplette Race-Nutrition simulieren (Gel alle 30min, 60–80g Carbs/h).',
+    checks:['Mi: SST 2×20\' @265W absolviert','Sa: 5h ABSOLVIERT 🌟','Nutrition Protokoll getestet'],
+    sessions:[
+      {day:'MO',name:'Gym: Beine & Core',detail:'Maintain, kein neues Maximalgewicht mehr',xp:20},
+      {day:'DI',name:'Mobility',detail:'Routine',xp:5},
+      {day:'MI',name:'SST 2×20\'',detail:'15\' WU → 2× 20min @265W, 5min Pause → CD',xp:50,zwo:{name:'W13_MI_SST_2x20_265W',ftp:295,wu:900,intervals:[{dur:1200,pwr:0.898},{dur:300,pwr:0.508}],sets:2,cd:600}},
+      {day:'DO',name:'Zone 2',detail:'@190W, 3h',xp:30,zwo:{name:'W13_DO_Z2_180min',ftp:295,wu:300,intervals:[{dur:10800,pwr:0.644}],sets:1,cd:300}},
+      {day:'FR',name:'Gym: OK + Core',detail:'Leichter als sonst',xp:10},
+      {day:'SA',name:'LONG RIDE 5h 🚩',detail:'@180W — RACE-NUTRITION-DRESS-REHEARSAL',xp:45,zwo:{name:'W13_SA_LongRide_5h',ftp:295,wu:300,intervals:[{dur:17400,pwr:0.61}],sets:1,cd:300}},
+      {day:'SO',name:'RUHETAG',detail:'Sauna, Extra Recovery',xp:0},
+    ]},
+  { num:14, dates:'01.–07.06.', tss:350, title:'Letzter Deload', badge:'deload', focus:'Letzte Erholung vor den Peak-Wochen. Schlaf >8h priorisieren.',
+    checks:['Schlaf >8h jede Nacht','Beine kribbeln am Sonntag'],
+    sessions:[
+      {day:'MO',name:'Gym Light (70%)',detail:'Recovery',xp:10},
+      {day:'DI',name:'Mobility',detail:'Dehnen, Foam Rolling',xp:5},
+      {day:'MI',name:'SST 3×5\' easy',detail:'3× 5min @255W, entspannt',xp:25,zwo:{name:'W14_MI_SST_easy',ftp:295,wu:900,intervals:[{dur:300,pwr:0.864},{dur:180,pwr:0.508}],sets:3,cd:600}},
+      {day:'DO',name:'Zone 2 easy',detail:'@180W, locker',xp:15,zwo:{name:'W14_DO_Z2_easy',ftp:295,wu:300,intervals:[{dur:7200,pwr:0.61}],sets:1,cd:300}},
+      {day:'FR',name:'RUHETAG',detail:'Pause',xp:0},
+      {day:'SA',name:'Zone 2',detail:'@175W, 2,5h, entspannt',xp:30,zwo:{name:'W14_SA_Z2_2h30',ftp:295,wu:300,intervals:[{dur:8400,pwr:0.593}],sets:1,cd:300}},
+      {day:'SO',name:'RUHETAG',detail:'Sauna, Massage',xp:0},
+    ]},
+  { num:15, dates:'08.–14.06.', tss:750, title:'5,5h Peak Ride', badge:'', focus:'5,5h mit allem: Race-Equipment, Race-Nutrition, Race-Pacing. Was hier funktioniert, machst du am Renntag.',
+    checks:['Mi: SST Pyramid @260W absolviert','Sa: 5,5h absolviert','Alles getestet (Kleidung, Schuhe, Gels)'],
+    sessions:[
+      {day:'MO',name:'Gym: Beine & Core',detail:'Letzte schwere Gym-Woche — nochmal alles geben',xp:20},
+      {day:'DI',name:'Mobility',detail:'Routine',xp:5},
+      {day:'MI',name:'SST Pyramid',detail:'15\' WU → 5\'8\'10\'8\'5min @260W, 3min Pause → CD',xp:50,zwo:{name:'W15_MI_SST_Pyramid',ftp:295,wu:900,pyramid:true,cd:600}},
+      {day:'DO',name:'Zone 2',detail:'@190W, 3h',xp:30,zwo:{name:'W15_DO_Z2_180min',ftp:295,wu:300,intervals:[{dur:10800,pwr:0.644}],sets:1,cd:300}},
+      {day:'FR',name:'Gym: OK + Core',detail:'Letzte Gym-Session vor Taper!',xp:15},
+      {day:'SA',name:'LONG RIDE 5,5h',detail:'@180W — FINAL DRESS REHEARSAL',xp:45,zwo:{name:'W15_SA_LongRide_5h30',ftp:295,wu:300,intervals:[{dur:19200,pwr:0.61}],sets:1,cd:300}},
+      {day:'SO',name:'RUHETAG',detail:'Sauna, Recovery',xp:0},
+    ]},
+  { num:16, dates:'15.–21.06.', tss:800, title:'6h Race-Simulation 🔥', badge:'', focus:'ABSOLUTER PEAK. 6h mit allem. Danach weißt du: Du schaffst das Rennen.',
+    checks:['Mi: SST 2×20\' @265W absolviert','Sa: 6h ABSOLVIERT 🏆','Race-Equipment komplett getestet'],
+    sessions:[
+      {day:'MO',name:'Mobility only',detail:'KEIN GYM MEHR — Kraft-Taper beginnt',xp:5},
+      {day:'DI',name:'Mobility',detail:'Routine',xp:5},
+      {day:'MI',name:'SST 2×20\'',detail:'2× 20min @265W — letzte harte Session',xp:50,zwo:{name:'W16_MI_SST_2x20_265W',ftp:295,wu:900,intervals:[{dur:1200,pwr:0.898},{dur:300,pwr:0.508}],sets:2,cd:600}},
+      {day:'DO',name:'Zone 2',detail:'@185W, 2,5h',xp:30,zwo:{name:'W16_DO_Z2_150min',ftp:295,wu:300,intervals:[{dur:9000,pwr:0.627}],sets:1,cd:300}},
+      {day:'FR',name:'RUHETAG',detail:'Beine komplett schonen für Samstag',xp:0},
+      {day:'SA',name:'LONGEST RIDE 6h 🏆',detail:'@180W NP — RACE-SIMULATION',xp:45,zwo:{name:'W16_SA_RaceSimulation_6h',ftp:295,wu:300,intervals:[{dur:21000,pwr:0.61}],sets:1,cd:300}},
+      {day:'SO',name:'RUHETAG',detail:'Sauna, Extra Recovery, Schlaf ≥8h',xp:0},
+    ]},
+  // PHASE 4
+  { num:17, dates:'22.–28.06.', tss:300, title:'TAPER + RACE DAY 🏁', badge:'race', focus:'Volumen -50%, Intensität bleibt kurz. Du wirst dich untrainiert fühlen — das ist der Taper der wirkt!',
+    checks:['Mi: Opener 6×1\' absolviert — Beine scharf','Do: 1h Z2 easy absolviert','Schlaf >8h jede Nacht','Material-Check vollständig'],
+    sessions:[
+      {day:'MO',name:'Mobility only',detail:'Sanft, Beine locker halten',xp:5},
+      {day:'DI',name:'RUHETAG',detail:'Komplette Ruhe, Schlaf >8h',xp:0},
+      {day:'MI',name:'Opener 6×1\'',detail:'15\' WU → 6× 1min @300W, 2min Pause → 10\' CD',xp:50,zwo:{name:'W17_MI_Opener_6x1_300W',ftp:300,wu:900,intervals:[{dur:60,pwr:1.0},{dur:120,pwr:0.5}],sets:6,cd:600}},
+      {day:'DO',name:'Zone 2 easy',detail:'@180W, 1h, Beine durchbewegen',xp:20,zwo:{name:'W17_DO_Z2_60min',ftp:300,wu:300,intervals:[{dur:3000,pwr:0.6}],sets:1,cd:300}},
+      {day:'FR',name:'RUHETAG',detail:'Anreise, Check-In, Material-Check, früh ins Bett',xp:0},
+      {day:'SA',name:'🚀 RENNTAG',detail:'DREILÄNDERGIRO — ALLES GEBEN!',xp:100},
+      {day:'SO',name:'Recovery',detail:'Feiern. Du hast es geschafft. 🎉',xp:0},
+    ]},
+];
+
+// ═══════════════════════════════════════════════
+// XP SYSTEM
+// ═══════════════════════════════════════════════
+const levels = [
+  {min:0,   name:'Anfänger',  icon:'🚲'},
+  {min:200, name:'Fahrer',    icon:'🚴'},
+  {min:500, name:'Sportler',  icon:'⚡'},
+  {min:1000,name:'Athlet',    icon:'🔥'},
+  {min:2000,name:'Profi',     icon:'💪'},
+  {min:3000,name:'Champion',  icon:'🏆'},
+  {min:4500,name:'DLG-Bereit',icon:'🎯'},
+];
+
+function getLevel(xp){
+  let lvl = levels[0];
+  for(let i=levels.length-1;i>=0;i--){ if(xp>=levels[i].min){ lvl=levels[i]; lvl.idx=i; break; } }
+  lvl.next = levels[lvl.idx+1]||null;
+  if(lvl.next){ lvl.pct=Math.round((xp-lvl.min)/(lvl.next.min-lvl.min)*100); }
+  else { lvl.pct=100; }
+  return lvl;
+}
+
+function getTotalXP(){
+  let earned=0, total=0;
+  weeks.forEach((w,wi)=>{
+    w.sessions.forEach((s,si)=>{ total+=s.xp; if(S[`s_${wi}_${si}`]) earned+=s.xp; });
+    w.checks.forEach((_,ci)=>{ total+=10; if(S[`c_${wi}_${ci}`]) earned+=10; });
+  });
+  return {earned, total, pct: total ? Math.round(earned/total*100) : 0};
+}
+
+function getCurrentWeek(){
+  const start = new Date('2026-03-02');
+  const now = new Date();
+  const diff = Math.floor((now-start)/(1000*60*60*24*7));
+  return Math.max(0, Math.min(16, diff));
+}
+
+// ═══════════════════════════════════════════════
+// ZWO GENERATOR
+// ═══════════════════════════════════════════════
+function makeZWO(z){
+  let xml = `<?xml version="1.0" encoding="utf-8"?>\n<workout_file>\n  <author>Coach .Zwo — DLG 2026</author>\n  <name>${z.name}</name>\n  <sportType>bike</sportType>\n  <workout>\n`;
+  // Warmup
+  xml += `    <Warmup Duration="${z.wu}" PowerLow="${(0.4).toFixed(3)}" PowerHigh="${(0.7).toFixed(3)}"/>\n`;
+  if(z.ramp){
+    xml += `    <Ramp Duration="1800" PowerLow="0.550" PowerHigh="1.300"/>\n`;
+  } else if(z.pyramid){
+    const blocks=[300,480,600,480,300];
+    blocks.forEach((dur,i)=>{
+      xml+=`    <SteadyState Duration="${dur}" Power="${(0.881).toFixed(3)}"/>\n`;
+      if(i<blocks.length-1) xml+=`    <SteadyState Duration="180" Power="0.508"/>\n`;
+    });
+  } else {
+    for(let i=0;i<z.sets;i++){
+      z.intervals.forEach(iv=>{
+        xml+=`    <SteadyState Duration="${iv.dur}" Power="${iv.pwr.toFixed(3)}"/>\n`;
+      });
+    }
+  }
+  xml += `    <Cooldown Duration="${z.cd}" PowerLow="${(0.6).toFixed(3)}" PowerHigh="${(0.4).toFixed(3)}"/>\n`;
+  xml += `  </workout>\n</workout_file>`;
+  return xml;
+}
+
+function dlZWO(z){
+  const xml = makeZWO(z);
+  const blob = new Blob([xml],{type:'application/xml'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = z.name+'.zwo';
+  a.click();
+  URL.revokeObjectURL(a.href);
+  showToast('⬇️ '+z.name+'.zwo');
+}
+
+// ═══════════════════════════════════════════════
+// TOAST
+// ═══════════════════════════════════════════════
+let toastTimer;
+function showToast(msg){
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(()=>t.classList.remove('show'), 2800);
+}
+
+// ═══════════════════════════════════════════════
+// UPDATE PROGRESS BAR
+// ═══════════════════════════════════════════════
+function updateProgress(){
+  const xp = getTotalXP();
+  document.getElementById('progFill').style.width = xp.pct+'%';
+  document.getElementById('progXP').textContent = xp.earned+' XP';
+}
+
+// ═══════════════════════════════════════════════
+// RENDER PLAN — DOM-BASED (no innerHTML for interactive elements)
+// ═══════════════════════════════════════════════
+function renderPlan(){
+  const container = document.getElementById('page-plan');
+  container.innerHTML = '';
+  const cw = getCurrentWeek();
+
+  // XP Hero
+  const xpData = getTotalXP();
+  const lvl = getLevel(xpData.earned);
+  lvl.idx = levels.indexOf(levels.find(l=>l.name===lvl.name));
+
+  const hero = document.createElement('div');
+  hero.className = 'xp-hero';
+  hero.innerHTML = `
+    <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:10px;">
+      <div>
+        <div class="xp-level-lbl">LEVEL ${(lvl.idx||0)+1}</div>
+        <div class="xp-level-name">${lvl.icon} ${lvl.name.toUpperCase()}</div>
+        <div class="xp-next">${lvl.next ? `Nächstes: ${lvl.next.icon} ${lvl.next.name} · ${lvl.next.min - xpData.earned} XP` : 'MAX LEVEL 🏆'}</div>
+      </div>
+      <div style="text-align:right;">
+        <div class="xp-num">${xpData.earned}</div>
+        <div class="xp-total-lbl">XP TOTAL</div>
+      </div>
+    </div>
+    <div class="xp-bar-track"><div class="xp-bar-fill" style="width:${lvl.pct}%"></div></div>
+    <div class="xp-bar-labels"><span class="xp-bar-lbl">${lvl.min} XP</span><span class="xp-bar-lbl">${lvl.next ? lvl.next.min+' XP' : 'MAX'}</span></div>
+  `;
+  container.appendChild(hero);
+
+  // Stats
+  const doneSess = weeks.reduce((acc,w,wi)=> acc + w.sessions.filter((_,si)=>S[`s_${wi}_${si}`]).length, 0);
+  const stats = document.createElement('div');
+  stats.className = 'stats-row';
+  stats.innerHTML = `
+    <div class="stat-box"><div class="stat-val">${daysLeft()}</div><div class="stat-lbl">TAGE</div></div>
+    <div class="stat-box"><div class="stat-val">${doneSess}</div><div class="stat-lbl">SESSIONS</div></div>
+    <div class="stat-box"><div class="stat-val" style="color:var(--a3)">${xpData.pct}%</div><div class="stat-lbl">FORTSCHRITT</div></div>
+  `;
+  container.appendChild(stats);
+
+  // XP Legend
+  const legend = document.createElement('div');
+  legend.className = 'xp-legend';
+  legend.innerHTML = `
+    <div class="xp-tag" style="color:var(--accent)">MI ⭐50</div>
+    <div class="xp-tag" style="color:var(--a3)">SA ⭐45</div>
+    <div class="xp-tag" style="color:var(--green)">DO ⭐30</div>
+    <div class="xp-tag" style="color:var(--a2)">MO ⭐20</div>
+    <div class="xp-tag" style="color:var(--muted)">CHECK ⭐10</div>
+  `;
+  container.appendChild(legend);
+
+  // Weeks grouped by phase
+  phases.forEach(ph=>{
+    // Phase banner
+    const banner = document.createElement('div');
+    banner.className = 'phase-banner';
+    banner.style.borderColor = ph.color+'44';
+    banner.style.background = `rgba(${hexToRgb(ph.color)},0.05)`;
+    banner.innerHTML = `<div class="phase-num">PHASE ${ph.num}</div><div class="phase-name" style="color:${ph.color}">${ph.name}</div>`;
+    container.appendChild(banner);
+
+    ph.weeks.forEach(wi=>{
+      const w = weeks[wi];
+      const isC = wi===cw;
+      const pg = getWeekProgress(wi);
+
+      // Week card element
+      const wcard = document.createElement('div');
+      wcard.className = 'wcard'+(isC?' current':'')+(S[`w_open_${wi}`]?' open':'');
+      wcard.id = 'wc'+wi;
+
+      // Header button — NATIVE BUTTON, direct addEventListener
+      const whdr = document.createElement('button');
+      whdr.className = 'whdr';
+      whdr.type = 'button';
+
+      let badgeHtml = '';
+      if(w.badge==='deload') badgeHtml='<span class="badge b-deload">⚡ DELOAD</span>';
+      if(w.badge==='test')   badgeHtml='<span class="badge b-test">🎯 TEST</span>';
+      if(w.badge==='race')   badgeHtml='<span class="badge b-race">🏁 RACE</span>';
+      if(isC)               badgeHtml+='<span class="badge b-now">JETZT</span>';
+
+      whdr.innerHTML = `
+        <div class="wleft">
+          <div class="wnum">${String(w.num).padStart(2,'0')}</div>
+          <div><div class="wtitle">${w.title}${badgeHtml}</div><div class="wdates">${w.dates} · TSS ~${w.tss}</div></div>
+        </div>
+        <div class="wright">
+          ${ringHTML(pg.pct, ph.color)}
+          <div class="chevron">▾</div>
+        </div>
+      `;
+
+      whdr.addEventListener('click', function(){
+        S[`w_open_${wi}`] = !S[`w_open_${wi}`];
+        saveState();
+        wcard.classList.toggle('open', !!S[`w_open_${wi}`]);
+      });
+
+      wcard.appendChild(whdr);
+
+      // Body
+      const wbody = document.createElement('div');
+      wbody.className = 'wbody';
+
+      // Sessions
+      w.sessions.forEach((s,si)=>{
+        const done = !!S[`s_${wi}_${si}`];
+        const srow = document.createElement('div');
+        srow.className = 'srow';
+
+        const dayDot = document.createElement('div');
+        dayDot.className = `day-dot d-${s.day.toLowerCase()}`;
+        dayDot.textContent = s.day;
+
+        const scontent = document.createElement('div');
+        scontent.className = 'scontent';
+        scontent.innerHTML = `<div class="sname${done?' done-s':''}">${s.name}</div><div class="sdetail">${s.detail}</div>`;
+
+        const sactions = document.createElement('div');
+        sactions.className = 'sactions';
+
+        if(s.zwo){
+          const zBtn = document.createElement('button');
+          zBtn.className = 'zwo-btn';
+          zBtn.textContent = 'ZWO';
+          zBtn.addEventListener('click', function(e){
+            e.stopPropagation();
+            dlZWO(s.zwo);
+          });
+          sactions.appendChild(zBtn);
+        }
+
+        // NATIVE CHECKBOX LABEL — most reliable on iOS Safari
+        const chkLabel = document.createElement('label');
+        chkLabel.className = 'chk-label'+(done?' on':'');
+        chkLabel.setAttribute('aria-label', done ? 'Abgehakt' : 'Abhaken');
+
+        const chkInput = document.createElement('input');
+        chkInput.type = 'checkbox';
+        chkInput.checked = done;
+        chkInput.style.cssText = 'position:absolute;opacity:0;width:1px;height:1px;pointer-events:none;';
+
+        chkInput.addEventListener('change', function(e){
+          e.stopPropagation();
+          const xpBefore = getTotalXP().earned;
+          S[`s_${wi}_${si}`] = this.checked;
+          saveState();
+          chkLabel.classList.toggle('on', this.checked);
+          // Update sname strikethrough
+          const sn = scontent.querySelector('.sname');
+          sn.classList.toggle('done-s', this.checked);
+          if(this.checked){
+            const gained = getTotalXP().earned - xpBefore;
+            showToast(`+${s.xp} XP ⭐ Session abgehakt!`);
+          } else {
+            showToast(`-${s.xp} XP · Zurückgesetzt`);
+          }
+          updateProgress();
+          // Update week ring
+          const newPg = getWeekProgress(wi);
+          const ringEl = wcard.querySelector('.ring-wrap svg circle.ring-fg');
+          if(ringEl){
+            const circ = 2*Math.PI*15;
+            ringEl.style.strokeDashoffset = circ*(1-newPg.pct/100);
+          }
+        });
+
+        chkLabel.appendChild(chkInput);
+        sactions.appendChild(chkLabel);
+
+        srow.appendChild(dayDot);
+        srow.appendChild(scontent);
+        srow.appendChild(sactions);
+        wbody.appendChild(srow);
+      });
+
+      // Focus
+      const focus = document.createElement('div');
+      focus.className = 'wfocus';
+      focus.innerHTML = `<div class="focus-lbl">FOKUS</div><div class="focus-txt">${w.focus}</div>`;
+      wbody.appendChild(focus);
+
+      // Checks
+      const checksDiv = document.createElement('div');
+      checksDiv.className = 'wchecks';
+      const checksLbl = document.createElement('div');
+      checksLbl.className = 'checks-lbl';
+      checksLbl.textContent = 'WOCHENZIELE';
+      checksDiv.appendChild(checksLbl);
+
+      w.checks.forEach((c,ci)=>{
+        const done = !!S[`c_${wi}_${ci}`];
+
+        const ciLabel = document.createElement('label');
+        ciLabel.className = 'ci-label'+(done?' on':'');
+
+        const miniChk = document.createElement('div');
+        miniChk.className = 'mini-chk';
+
+        const ciTxt = document.createElement('div');
+        ciTxt.className = 'ci-txt';
+        ciTxt.textContent = c;
+
+        const ciInput = document.createElement('input');
+        ciInput.type = 'checkbox';
+        ciInput.checked = done;
+        ciInput.style.cssText = 'position:absolute;opacity:0;width:1px;height:1px;pointer-events:none;';
+
+        ciInput.addEventListener('change', function(){
+          S[`c_${wi}_${ci}`] = this.checked;
+          saveState();
+          ciLabel.classList.toggle('on', this.checked);
+          if(this.checked){
+            showToast('+10 XP · Ziel erreicht! ✓');
+          }
+          updateProgress();
+        });
+
+        ciLabel.appendChild(ciInput);
+        ciLabel.appendChild(miniChk);
+        ciLabel.appendChild(ciTxt);
+        checksDiv.appendChild(ciLabel);
+      });
+
+      wbody.appendChild(checksDiv);
+      wcard.appendChild(wbody);
+      container.appendChild(wcard);
+    });
+  });
+
+  updateProgress();
+}
+
+function getWeekProgress(wi){
+  const w = weeks[wi];
+  let earned=0, total=0;
+  w.sessions.forEach((_,si)=>{ total+=1; if(S[`s_${wi}_${si}`]) earned+=1; });
+  w.checks.forEach((_,ci)=>{ total+=1; if(S[`c_${wi}_${ci}`]) earned+=1; });
+  return {pct: total ? Math.round(earned/total*100) : 0};
+}
+
+function hexToRgb(hex){
+  const r=parseInt(hex.slice(1,3),16), g=parseInt(hex.slice(3,5),16), b=parseInt(hex.slice(5,7),16);
+  return `${r},${g},${b}`;
+}
+
+function ringHTML(pct, color){
+  const r=15, circ=2*Math.PI*r, offset=circ*(1-pct/100);
+  return `<div class="ring-wrap"><svg viewBox="0 0 38 38"><circle class="ring-bg" cx="19" cy="19" r="${r}" fill="none" stroke="var(--border)" stroke-width="3"/><circle class="ring-fg" cx="19" cy="19" r="${r}" fill="none" stroke="${color}" stroke-width="3" stroke-dasharray="${circ}" stroke-dashoffset="${offset}" stroke-linecap="round" transform="rotate(-90 19 19)" style="transition:stroke-dashoffset .4s ease"/></svg><div class="ring-pct" style="color:${color}">${pct}%</div></div>`;
+}
+
+// ═══════════════════════════════════════════════
+// FTP PAGE
+// ═══════════════════════════════════════════════
+function renderFTP(){
+  const ftp = S.ftp || 272;
+  const wt = S.weight || 84.5;
+  const wkg = (ftp/wt).toFixed(2);
+
+  const container = document.getElementById('page-ftp');
+  container.innerHTML = `
+    <div class="sec-title" style="color:var(--a2)">FTP & ZONEN</div>
+    <div class="sec-sub">LEISTUNGSDIAGNOSTIK</div>
+
+    <div class="card">
+      <div class="ftp-hero">${ftp}W</div>
+      <div class="ftp-wkg">${wkg} W/KG</div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">FTP BERECHNEN (RAMP TEST)</div>
+      <div class="input-lbl">PEAK POWER (W)</div>
+      <div class="input-group">
+        <input class="input-field" id="peakInput" type="number" inputmode="numeric" placeholder="z.B. 363">
+        <button class="calc-btn" onclick="calcFTP()">BERECHNEN</button>
+      </div>
+      <div class="input-lbl">GEWICHT (KG)</div>
+      <div class="input-group">
+        <input class="input-field" id="weightInput" type="number" inputmode="decimal" placeholder="${wt}" value="${wt}">
+        <button class="calc-btn" style="background:var(--a2)" onclick="saveWeight()">SPEICHERN</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">TRAININGSZONEN — FTP ${ftp}W</div>
+      <div class="zones-grid" id="zonesGrid"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">FTP VERLAUF</div>
+      <div id="ftpHistory"></div>
+    </div>
+  `;
+
+  renderZones(ftp);
+  renderFTPHistory();
+}
+
+function calcFTP(){
+  const peak = parseFloat(document.getElementById('peakInput').value);
+  if(!peak||peak<100){ showToast('❌ Gültige Peak Power eingeben'); return; }
+  const newFTP = Math.round(peak * 0.75);
+  S.ftp = newFTP;
+  if(!S.ftpHistory) S.ftpHistory = [];
+  const today = new Date().toLocaleDateString('de-DE');
+  const wt = S.weight||84.5;
+  S.ftpHistory.push({date:today, ftp:newFTP, wkg:(newFTP/wt).toFixed(2)});
+  saveState();
+  showToast(`✅ FTP: ${newFTP}W gespeichert!`);
+  renderFTP();
+}
+
+function saveWeight(){
+  const wt = parseFloat(document.getElementById('weightInput').value);
+  if(!wt||wt<40){ showToast('❌ Gültiges Gewicht eingeben'); return; }
+  S.weight = wt;
+  saveState();
+  showToast(`✅ Gewicht: ${wt}kg gespeichert`);
+  renderFTP();
+}
+
+function renderZones(ftp){
+  const zones = [
+    {name:'Z1 Recovery',  range:[0.0,  0.55], color:'#47b8ff'},
+    {name:'Z2 Aerob',     range:[0.56, 0.75], color:'#47ffb8'},
+    {name:'Z3 Tempo',     range:[0.76, 0.87], color:'#e8ff47'},
+    {name:'SST',          range:[0.88, 0.94], color:'#ffb847'},
+    {name:'Z4 Threshold', range:[0.95, 1.05], color:'#ff6b47'},
+    {name:'Z5 VO2max',    range:[1.06, 1.20], color:'#ff47b8'},
+  ];
+  const grid = document.getElementById('zonesGrid');
+  grid.innerHTML = '';
+  zones.forEach(z=>{
+    const lo = Math.round(ftp*z.range[0]);
+    const hi = Math.round(ftp*z.range[1]);
+    const box = document.createElement('div');
+    box.className = 'zone-box';
+    box.style.borderColor = z.color+'44';
+    box.innerHTML = `<div class="zone-name">${z.name}</div><div class="zone-val" style="color:${z.color}">${lo}–${hi}W</div><div class="zone-desc">${Math.round(z.range[0]*100)}–${Math.round(z.range[1]*100)}% FTP</div>`;
+    grid.appendChild(box);
+  });
+}
+
+function renderFTPHistory(){
+  if(!S.ftpHistory) S.ftpHistory = [{date:'20.02.2026', ftp:272, wkg:'3.22'}];
+  const el = document.getElementById('ftpHistory');
+  el.innerHTML = '';
+  S.ftpHistory.slice().reverse().forEach(entry=>{
+    const row = document.createElement('div');
+    row.style.cssText = 'display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--border);';
+    row.innerHTML = `<span style="font-family:'DM Mono',monospace;font-size:11px;color:var(--muted)">${entry.date}</span><span style="font-family:'Bebas Neue',sans-serif;font-size:22px;color:var(--a2)">${entry.ftp}W</span><span style="font-family:'DM Mono',monospace;font-size:11px;color:var(--accent)">${entry.wkg} W/kg</span>`;
+    el.appendChild(row);
+  });
+}
+
+// ═══════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════
+if(!S.ftpHistory) S.ftpHistory = [{date:'20.02.2026', ftp:272, wkg:'3.22'}];
+if(!S.ftp) S.ftp = 272;
+if(!S.weight) S.weight = 84.5;
+
+// Auto-open current week
+const cw = getCurrentWeek();
+if(!S[`w_open_${cw}`]){ S[`w_open_${cw}`]=true; saveState(); }
+
+renderPlan();
+</script>
+
+</body>
+</html>
